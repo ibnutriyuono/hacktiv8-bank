@@ -11,11 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Account.belongsTo(models.Customer)
     }
   };
   Account.init({
     type: DataTypes.STRING,
-    balance: DataTypes.STRING
+    balance: DataTypes.STRING,
+    accountNumber: DataTypes.FLOAT,
   }, {
     sequelize,
     modelName: 'Account',

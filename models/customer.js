@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Customer.hasMany(models.Account)
     }
   };
   Customer.init({
@@ -18,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     fullName: DataTypes.STRING,
     address: DataTypes.STRING,
     birthDate: DataTypes.DATE,
-    accountNumber: DataTypes.STRING,
     gender: DataTypes.STRING
   }, {
     sequelize,
