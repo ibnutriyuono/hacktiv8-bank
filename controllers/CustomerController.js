@@ -39,14 +39,27 @@ class CustomerController {
       }
     })
       .then(data => {
-        res.send(data)
+        res.render('./pages/edit-form-customer',{
+          data
+        })
       })
       .catch(err => {
         res.send(err)
       })
   }
   static handleEditProfileForm(req, res){
-    res.send(req.body)
+    let id = req.params.idCustomer
+    Customer.update(req.body, {
+      where:{
+        id
+      }
+    })
+      .then(_ => {
+        res.redirect('/customers')
+      })
+      .catch(err => {
+        res.redirect(`/customers/?err=${err}`)
+      })
   }
   static getAccountById(req, res){
     let id = +req.params.idCustomer

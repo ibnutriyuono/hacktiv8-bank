@@ -1,0 +1,42 @@
+<%- include('../templates/_head')-%>
+  <h1 class="text-center">Edit Customer</h1>
+  <div class="d-flex justify-content-center">
+    <a href="/customers" class="btn btn-primary" > show all customers</a>
+  </div>
+  <div class="container mt-3">
+    <form action="/customers/<%= data[0].id %>/editProfile" method="post" class="d-flex justify-content-center flex-column">
+      <div class="form-group">
+        <label for="identityNumber">ID Number</label>
+        <input type="text" class="form-control" id="identityNumber" name="identityNumber" autofocus value="<%= data[0].identityNumber %>">
+      </div>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" name="fullName" value="<%= data[0].fullName %>">
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input type="text" class="form-control" id="address" name="address" value="<%= data[0].address %>">
+      </div>
+      <div class="form-group">
+        <label for="birthDate">Birth Date</label>
+        <input type="date" class="form-control" id="birthDate" name="birthDate" value="<%= data[0].birthDate.toJSON().slice(0,10) %>">
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <% let genderArr = ['male', 'female'] %>
+        <% for(let i = 0; i < genderArr.length; i++) { %>
+          <% let checked = ( data[0].gender === genderArr[i] ) ? "checked" : "";%>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="<%= genderArr[i] %>" <%=checked %> >
+            <label class="form-check-label" for="gender-male">
+              <%= genderArr[i] %>
+            </label>
+          </div>
+        <% } %>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+<%- include('../templates/_footer')-%>
