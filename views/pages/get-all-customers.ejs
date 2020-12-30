@@ -1,0 +1,26 @@
+
+<%- include('../templates/_head')-%>
+<h1 class="text-center">Welcome To Hacktiv8 Bank</h1>
+<div class="container mt-3 d-flex justify-content-center align-items-center">
+  <table class="table table-hover">
+    <tr>
+      <th>Identity Number</th>
+      <th>Full Name</th>
+      <th>Actions</th>
+    </tr>
+    <% data.forEach(customer => { %>
+      <tr>
+        <td><%= customer.dataValues.identityNumber %></td>
+        <td><%= customer.dataValues.fullName %></td>
+        <td>
+          <a href="/customers/<%= customer.dataValues.id %>/accounts" class="btn btn-primary">View Account</a>
+          <a href="/customers/<%= customer.dataValues.id %>/editProfile" class="btn btn-danger">Edit Profile</a>
+        </td>
+      </tr>
+    <% }) %> 
+  </table>
+</div>
+<div class="d-flex justify-content-center">
+  <a href="/prodhouses/add" class="btn btn-primary" >Register (New Customer) </a>
+</div>
+<%- include('../templates/_footer')-%>

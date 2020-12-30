@@ -4,10 +4,15 @@ const { Customer, Account } = require('../models')
 class CustomerController {
   static getAllCustomers(req, res){
     Customer.findAll({
+      order: [
+        ['fullName', 'ASC']
+      ],
       include: [ Account ]
     })
       .then(data => {
-        res.send(data)
+        res.render('./pages/get-all-customers', {
+          data
+        })
       })
       .catch(err => {
         res.send(err)
