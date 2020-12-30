@@ -19,10 +19,17 @@ class CustomerController {
       })
   }
   static renderRegisterForm(req, res){
-    res.send('post form')
+    res.render('./pages/post-form-register-customer')
   }
   static handleRegister(req, res){
-    res.send(req.body)
+    Customer.create(req.body)
+      .then(_ => {
+        res.redirect('/customers')
+      })
+      .catch(err => {
+        res.redirect(`/customers/?err=${err}`)
+      })
+    // res.send(req.body)
   }
   static renderEditProfileForm(req, res){
     let id = +req.params.idCustomer
