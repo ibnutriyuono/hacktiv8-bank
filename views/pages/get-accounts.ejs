@@ -1,0 +1,51 @@
+
+<%- include('../templates/_head')-%>
+<div class="container">
+  <a href="/customers" class="btn btn-primary" >Back</a>
+  <h1 class="mt-3">Good day, <%= data[0].fullName %></h1>
+</div>
+<div class="container mt-3 d-flex justify-content-center align-items-center">
+  <table class="table table-hover">
+    <tr>
+      <th>Account Number</th>
+      <th>Type</th>
+      <th>Balance</th>
+      <th>Actions</th>
+    </tr>
+    <% data[0].Accounts.forEach(account => { %>
+      <tr>
+        <td><%= account.accountNumber %></td>
+        <td><%= account.type %></td>
+        <td><%= account.balance %></td>
+        <td><a href="/customers/<%= data[0].id %>/accounts/<%= account.id %>/transfer" class="btn btn-primary">transfer</a></td>
+      </tr>
+    <% }) %>
+  </table>
+</div>
+<div class="d-flex container">
+  <h1 class="mt-3">Add Account</h1>
+</div>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-6">
+      <form action="/customers/<%= data[0].id %>/accounts" method="post">
+        <div class="form-group">
+          <label for="type">Account Type</label>
+          <select name="type" id="type" class="form-control">
+            <option value="On Account">On Account</option>
+            <option value="Xtra Payroll">Xtra Payroll</option>
+            <option value="Tabunganku">Tabunganku</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="balance">Balance</label>
+          <input type="text" class="form-control" id="balance" name="balance">
+        </div>
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('../templates/_footer')-%>

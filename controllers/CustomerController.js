@@ -63,20 +63,27 @@ class CustomerController {
   }
   static getAccountById(req, res){
     let id = +req.params.idCustomer
-    Account.findAll({
+    Customer.findAll({
       where: {
         id
-      }
+      },
+      include: [ Account ]
     })
       .then(data => {
-        res.send(data)
+        res.render('./pages/get-accounts', {
+          data
+        })
       })
       .catch(err => {
         res.send(err)
       })
   }
   static handleAddNewAccount(req, res){
-    res.send(req.body)
+    let id = req.params.idCustomer
+    req.body.CustomerId = id
+    Account.create(req.body)
+      .then(_ => res.redirect(`/customers/${id}/accounts`))
+      .catch(err => res.redirect(`/customers/${id}/accounts/?err=${err}`))
   }
   static renderTranserForm(req, res){
     res.send('transfer form')

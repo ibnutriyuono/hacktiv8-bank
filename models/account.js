@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+const generateAccountNumber = require('../helpers/generateAccountNumber')
+
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     /**
@@ -19,6 +21,13 @@ module.exports = (sequelize, DataTypes) => {
     balance: DataTypes.STRING,
     accountNumber: DataTypes.FLOAT,
   }, {
+    hooks:{
+      beforeCreate: (instance, options) => {
+        if (!instance.accountNumber){
+          instance.accountNumber = generateAccountNumber()
+        }
+      }
+    },
     sequelize,
     modelName: 'Account',
   });
