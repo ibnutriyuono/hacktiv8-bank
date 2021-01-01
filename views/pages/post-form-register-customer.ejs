@@ -4,6 +4,18 @@
     <a href="/customers" class="btn btn-primary" > show all customers</a>
   </div>
   <div class="container mt-3">
+    <% if(errors){ %>
+      <% errors.forEach(error => { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <p><%= error %></p>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+  <div class="container mt-3">
     <form action="/customers/register" method="post" class="d-flex justify-content-center flex-column">
       <div class="form-group">
         <label for="identityNumber">ID Number</label>

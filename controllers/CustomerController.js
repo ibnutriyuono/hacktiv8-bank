@@ -19,17 +19,27 @@ class CustomerController {
       })
   }
   static renderRegisterForm(req, res){
-    res.render('./pages/post-form-register-customer')
+    let errors
+    if(req.query.err){
+      errors = req.query.err.split(',')
+    }
+    res.render('./pages/post-form-register-customer', {
+      errors
+    })
   }
   static handleRegister(req, res){
+    // res.send(req.body)
     Customer.create(req.body)
       .then(_ => {
         res.redirect('/customers')
       })
       .catch(err => {
-        res.redirect(`/customers/?err=${err}`)
+        let errorsArray = []
+        err.errors.forEach(el => {
+          errorsArray.push(el.message)
+        })
+        res.redirect(`/customers/register/?err=${errorsArray}`)
       })
-    // res.send(req.body)
   }
   static renderEditProfileForm(req, res){
     let id = +req.params.idCustomer

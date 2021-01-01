@@ -15,10 +15,51 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Customer.init({
-    identityNumber: DataTypes.STRING,
-    fullName: DataTypes.STRING,
+    identityNumber: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty:{
+          msg: 'Identity Number must be filled'
+        },
+        lengthValidation(value){
+          if(value.length < 16 || value.length > 20){
+            throw new Error('Identity Number minimum 16 characters and maximum 20 characters')
+          }
+        },
+        isDuplicate(value){
+          return Customer.findOne({
+            where:{
+                identityNumber: value
+            }
+          })
+            .then(data => {
+              if(data){
+                throw new Error('Duplicate Identity Number')
+              }
+            })
+            .catch(err => {
+              throw new Error(err)
+            })
+        }
+      }
+    },
+    fullName: {
+      type: DataTypes.STRING,
+      validate:{
+        notEmpty:{
+          msg: 'Full name must be filled'
+        }
+      }
+    },
     address: DataTypes.STRING,
-    birthDate: DataTypes.DATE,
+    birthDate: {
+      type: DataTypes.DATE,
+      validate:{
+        notEmpty:{
+          msg: 'Birth Date must be filled'
+        }
+      }
+    },
     gender: DataTypes.STRING
   }, {
     sequelize,
