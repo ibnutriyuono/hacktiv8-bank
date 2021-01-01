@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    // get maskBalance(){
-    //   return rupiahFormatter(this.balance)
-    // }
+    get maskBalance(){
+      return rupiahFormatter(this.balance)
+    }
     static associate(models) {
       // define association here
       Account.belongsTo(models.Customer)
@@ -22,16 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Account.init({
     type: DataTypes.STRING,
-    balance: {
-      type: DataTypes.STRING,
-      validate:{
-        lessThan500k(value){
-          if(value < 500000){
-            throw new Error('Minimum balance for new Accout: Rp500.000')
-          }
-        }
-      }
-    },
+    balance: DataTypes.FLOAT,
     accountNumber: DataTypes.FLOAT,
   }, {
     hooks:{
@@ -41,6 +32,23 @@ module.exports = (sequelize, DataTypes) => {
         }
         if(!instance.balance){
           instance.balance = 500000
+        }
+        if(instance.balance < 500000){
+          return Promise.reject({
+            errors:[{
+              message: 'Minimum balance for new Accout: Rp500.000'
+            }]
+          })  
+        }
+      },
+      beforeUpdate: (instance, options) => {
+        if (instance.balance < 0){
+          console.log('called')
+          return Promise.reject({
+            errors:[{
+              message: 'Insufficient balance'
+            }]
+          })
         }
       }
     },

@@ -1,4 +1,5 @@
 const { Customer, Account } = require('../models')
+const { Op } = require('sequelize')
 
 class CustomerController {
   static getAllCustomers(req, res){
@@ -120,8 +121,12 @@ class CustomerController {
       })
   }
   static handleAddNewAccount(req, res){
-    let id = req.params.idCustomer
+    let id = +req.params.idCustomer
     req.body.CustomerId = id
+    // res.send({
+    //   id,
+    //   body: req.body
+    // })
     Account.create(req.body)
       .then(_ => res.redirect(`/customers/${id}/accounts`))
       .catch(err => {
@@ -133,10 +138,99 @@ class CustomerController {
       })
   }
   static renderTranserForm(req, res){
-    res.send('transfer form')
+    let errors
+    if(req.query.err){
+      errors = req.query.err.split(',')
+    }
+    let idCustomer = req.params.idCustomer
+    let idAccount = req.params.idAccount
+    let allData
+    Account.findAll({
+      where:{
+        id:{
+          [Op.ne]: idAccount
+        }
+      },
+      include: [ Customer ]
+    })
+      .then(data => {
+        allData = data
+        return Account.findOne({
+          where:{
+            id: idAccount
+          },
+          include: [ Customer ]
+        })
+      })
+      .then(data => {
+        res.render('./pages/post-transfer-form', {
+          allData,
+          data,
+          errors
+        })
+      })
+      .catch(err => {
+        let errorsArray = []
+        err.errors.forEach(el => {
+          errorsArray.push(el.message)
+        })
+        res.redirect(`/customers/${idCustomer}/accounts/${idAccount}/transfer/?err=${errorsArray}`)
+      })
   }
   static handleTransfer(req, res){
-    res.send(req.body)
+    let from = req.params.idAccount
+    let to = req.body.transferTo
+    let amount = +req.body.amount
+    let idCustomer = req.params.idCustomer
+    let idAccount = req.params.idAccount
+    Account.findOne({
+      where:{
+        id: from
+      }
+    })
+      .then(data => {
+        let moneyLeft = data.balance - amount
+        return Account.update(
+          {
+            balance: moneyLeft
+          }, 
+          {
+          where:{
+            id: from
+          },
+          individualHooks: true 
+        })
+      })
+      .then(_ => {
+        return Account.findOne({
+          where:{
+            id: to
+          }
+        })
+      })
+      .then(data => {
+        let money = data.balance + amount
+        return Account.update(
+          {
+            balance: money
+          },
+          {
+            where:{
+              id: to
+            }
+          }
+        )
+      })
+      .then(_ => {
+        res.redirect(`/customers/${idCustomer}/accounts`)
+      })
+      .catch(err => {
+        let errorsArray = []
+        err.errors.forEach(el => {
+          errorsArray.push(el.message)
+        })
+        res.redirect(`/customers/${idCustomer}/accounts/${idAccount}/transfer/?err=${errorsArray}`)
+      })
   }
 }
 
