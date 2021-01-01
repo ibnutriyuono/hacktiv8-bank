@@ -1,4 +1,3 @@
-const { reset } = require('nodemon')
 const { Customer, Account } = require('../models')
 
 class CustomerController {
@@ -42,6 +41,10 @@ class CustomerController {
       })
   }
   static renderEditProfileForm(req, res){
+    let errors
+    if(req.query.err){
+      errors = req.query.err.split(',')
+    }
     let id = +req.params.idCustomer
     Customer.findAll({
       where: {
@@ -50,7 +53,8 @@ class CustomerController {
     })
       .then(data => {
         res.render('./pages/edit-form-customer',{
-          data
+          data,
+          errors
         })
       })
       .catch(err => {
@@ -59,19 +63,45 @@ class CustomerController {
   }
   static handleEditProfileForm(req, res){
     let id = req.params.idCustomer
-    Customer.update(req.body, {
+    Customer.findOne({
       where:{
-        id
+        id,
+        identityNumber: req.body.identityNumber
       }
     })
+      .then(data => {
+        // res.send(data)
+        if(data){
+          delete req.body.identityNumber
+          return Customer.update(req.body, {
+            where:{
+              id
+            }
+          })
+        }else{
+          return Customer.update(req.body, {
+            where:{
+              id
+            }
+          })
+        }
+      })
       .then(_ => {
         res.redirect('/customers')
       })
       .catch(err => {
-        res.redirect(`/customers/?err=${err}`)
+        let errorsArray = []
+        err.errors.forEach(el => {
+          errorsArray.push(el.message)
+        })
+        res.redirect(`/customers/${id}/editProfile/?err=${errorsArray}`)
       })
   }
   static getAccountById(req, res){
+    let errors
+    if(req.query.err){
+      errors = req.query.err.split(',')
+    }
     let id = +req.params.idCustomer
     Customer.findAll({
       where: {
@@ -81,7 +111,8 @@ class CustomerController {
     })
       .then(data => {
         res.render('./pages/get-accounts', {
-          data
+          data,
+          errors
         })
       })
       .catch(err => {
@@ -93,7 +124,13 @@ class CustomerController {
     req.body.CustomerId = id
     Account.create(req.body)
       .then(_ => res.redirect(`/customers/${id}/accounts`))
-      .catch(err => res.redirect(`/customers/${id}/accounts/?err=${err}`))
+      .catch(err => {
+        let errorsArray = []
+        err.errors.forEach(el => {
+          errorsArray.push(el.message)
+        })
+        res.redirect(`/customers/${id}/accounts/?err=${errorsArray}`)
+      })
   }
   static renderTranserForm(req, res){
     res.send('transfer form')
