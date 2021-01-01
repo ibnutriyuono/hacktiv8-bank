@@ -28,7 +28,7 @@
       <tr>
         <td><%= account.accountNumber %></td>
         <td><%= account.type %></td>
-        <td><%= account.balance %></td>
+        <td><%= account.balance.toLocaleString('en-ID', {style: 'currency', currency: 'IDR'}) %></td>
         <td><a href="/customers/<%= data[0].id %>/accounts/<%= account.id %>/transfer" class="btn btn-primary">transfer</a></td>
       </tr>
     <% }) %>

@@ -3,6 +3,7 @@ const {
   Model
 } = require('sequelize');
 const generateAccountNumber = require('../helpers/generateAccountNumber')
+const rupiahFormatter = require('../helpers/rupiahFormatter')
 
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
@@ -11,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+    // get maskBalance(){
+    //   return rupiahFormatter(this.balance)
+    // }
     static associate(models) {
       // define association here
       Account.belongsTo(models.Customer)
